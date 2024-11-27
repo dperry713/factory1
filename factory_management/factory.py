@@ -1,42 +1,19 @@
-import os
-from flask import Flask, jsonify
+from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from werkzeug.exceptions import HTTPException
+from app.models import db
+from app.auth.auth import auth_bp
+from app.blueprints.employees import employees_blueprint as employee_bp
 
-# Initialize extensions
-db = SQLAlchemy()
-limiter = Limiter(
-    key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"]
-)
 
-def register_blueprints(app):
-    from app.blueprints.employees import employees_blueprint
-    from app.blueprints.products import products_blueprint
-    from app.blueprints.orders import orders_blueprint
-    from app.blueprints.customers import customers_blueprint
-    from app.blueprints.production import production_blueprint
-
-    app.register_blueprint(employees_blueprint)
-    app.register_blueprint(products_blueprint)
-    app.register_blueprint(orders_blueprint)
-    app.register_blueprint(customers_blueprint)
-    app.register_blueprint(production_blueprint)
-
-def create_app(config_name=None):
+def create_app():
     app = Flask(__name__)
-    
-    # Set database URI
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///factory.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    # Initialize extensions
+    app.config['SECRET_KEY'] = 'your_secret_key'
+
     db.init_app(app)
-    limiter.init_app(app)
-    
-    # Register blueprints
-    register_blueprints(app)
-    
+
+    # Register Blueprints
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    app.register_blueprint(employee_bp, url_prefix='/api')
+
     return app
