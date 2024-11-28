@@ -1,5 +1,0 @@
-Flask==2.2.2
-Flask-SQLAlchemy==3.0.0
-Flask-Limiter==2.6.1
-python-dotenv
-Werkzeug==2.2.2
