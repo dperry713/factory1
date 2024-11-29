@@ -3,3 +3,4 @@ Flask-SQLAlchemy==3.0.0
 Flask-Limiter==2.6.1
 python-dotenv
 Werkzeug==2.2.2
+pytest>=7.4.0
